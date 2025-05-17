@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>实时换脸系统</title>
+  <script src="https://cdn.socket.io/3.1.3/socket.io.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    #camera-result-wrapper {
+      display: flex;
+      gap: 40px;
+      align-items: center;
+    }
+    video, img {
+      width: 480px;
+      height: 360px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+    #face-gallery {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+    #face-gallery img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border: 2px solid transparent;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+    #face-gallery img.selected {
+      border-color: blue;
+    }
+    #controls {
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-right: 10px;
+    }
+    #fps {
+      font-weight: bold;
+      color: green;
+    }
+    #status {
+      font-weight: bold;
+      margin-top: 10px;
+      color: #007BFF;
+    }
+  </style>
+</head>
+<body>
+  <h2>上传多张人脸图片，选择一张换脸</h2>
+  <input type="file" id="upload" multiple />
+  <div id="face-gallery"></div>
+
+  <div id="camera-result-wrapper">
+    <div>
+      <h3>🎥 摄像头画面</h3>
+      <video id="video" autoplay muted></video>
+    </div>
+    <div>
+      <h3>🎭 换脸结果</h3>
+      <img id="result" alt="换脸后结果">
+    </div>
+  </div>
+
+  <div id="controls">
+    <button id="startBtn">▶️ 开始换脸</button>
+    <button id="stopBtn">⏹️ 停止换脸</button>
+    <button id="saveBtn">💾 保存结果图</button>
+    <span id="fps">FPS: 0（发送: 0, 接收: 0）</span>
+    <div id="status">状态：等待</div>
+  </div>
+
+  <canvas id="canvas" hidden></canvas>
+
+  <script>
+    const socket = io();
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const result = document.getElementById('result');
+    const faceGallery = document.getElementById('face-gallery');
+    const fpsText = document.getElementById('fps');
+    const status = document.getElementById('status');
+
+    let streaming = false;
+    let timer = null;
+    let sendCount = 0;
+    let receiveCount = 0;
+    let faceImages = [];
+    let selectedFaceIndex = 0;
+
+    document.getElementById('upload').onchange = function () {
+      const files = this.files;
+
+      Array.from(files).forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+
+          const currentIndex = faceImages.length; // 固定当前图片对应的索引
+          img.onclick = () => {
+            selectedFaceIndex = currentIndex;
+            Array.from(faceGallery.children).forEach(child => child.classList.remove('selected'));
+            img.classList.add('selected');
+            status.innerText = `✅ 已选择第${selectedFaceIndex + 1}张人脸`;
+          };
+
+          faceGallery.appendChild(img);
+          img.click(); // 自动选择新上传的人脸
+          faceImages.push(e.target.result);
+        };
+        reader.readAsDataURL(file);
+      });
+
+      this.value = ''; // 防止连续上传同一文件触发不了
+    };
+
+    navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
+      video.srcObject = stream;
+    });
+
+    document.getElementById('startBtn').onclick = () => {
+      if (streaming || faceImages.length === 0) {
+        if (faceImages.length === 0) alert('❗请先上传并选择人脸！');
+        return;
+      }
+      status.innerText = "🎬 换脸中...";
+      streaming = true;
+      timer = setInterval(() => {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0);
+        const image_data = canvas.toDataURL('image/jpeg');
+        socket.emit('image', {
+          image_data,
+          face_image: faceImages[selectedFaceIndex]
+        });
+        sendCount++;
+      }, 400); // 1.5秒一帧
+    };
+
+    document.getElementById('stopBtn').onclick = () => {
+      streaming = false;
+      clearInterval(timer);
+      status.innerText = "⏹️ 已停止换脸";
+    };
+
+    document.getElementById('saveBtn').onclick = () => {
+      if (!result.src || result.src.startsWith('data:image')) {
+        const a = document.createElement('a');
+        a.href = result.src;
+        a.download = 'swap_result.jpg';
+        a.click();
+        status.innerText = "✅ 已保存结果图像";
+      } else {
+        alert("❗当前没有换脸结果可保存！");
+      }
+    };
+
+    socket.on('response_back', function (data) {
+      result.src = data.image_data;
+      receiveCount++;
+    });
+
+    setInterval(() => {
+      fpsText.innerText = `FPS: ${receiveCount}（发送: ${sendCount}, 接收: ${receiveCount})`;
+      sendCount = 0;
+      receiveCount = 0;
+    }, 1000);
+  </script>
+</body>
+</html>
