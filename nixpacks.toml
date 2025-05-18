@@ -6,5 +6,11 @@ nixPkgs = [
   "python310Packages.distutils",
   "libGL",
   "libGLU",
-  "mesa"
+  "mesa",
+  "glib",
+  "xorg.libX11",
+  "xorg.libXext",
+  "xorg.libXrender",
+  "xorg.libXtst",
+  "xorg.libXi"
 ] 
