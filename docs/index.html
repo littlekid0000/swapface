@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwapFace 项目主页</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            margin: 0;
+            background: linear-gradient(120deg, #f8fafc 0%, #e0e7ff 100%);
+            color: #22223b;
+        }
+        header {
+            background: #4f46e5;
+            color: #fff;
+            padding: 24px 0 16px 0;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(79,70,229,0.08);
+        }
+        nav {
+            margin-top: 10px;
+        }
+        nav a {
+            color: #c7d2fe;
+            text-decoration: none;
+            margin: 0 18px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        nav a:hover {
+            color: #fff;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(79,70,229,0.08);
+            padding: 40px 32px;
+        }
+        h1 {
+            margin-bottom: 8px;
+            font-size: 2.5em;
+            letter-spacing: 2px;
+        }
+        h2 {
+            color: #4f46e5;
+            margin-top: 32px;
+        }
+        .desc {
+            font-size: 1.2em;
+            color: #555;
+            margin-bottom: 32px;
+        }
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            margin-top: 24px;
+        }
+        .feature {
+            flex: 1 1 250px;
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(79,70,229,0.04);
+            text-align: center;
+        }
+        .feature h3 {
+            color: #6366f1;
+            margin-bottom: 12px;
+        }
+        footer {
+            text-align: center;
+            color: #888;
+            padding: 24px 0 12px 0;
+            font-size: 0.95em;
+        }
+        @media (max-width: 700px) {
+            .container { padding: 20px 8px; }
+            .features { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>SwapFace 项目主页</h1>
+        <nav>
+            <a href="#about">项目介绍</a>
+            <a href="#features">功能亮点</a>
+            <a href="#contact">联系方式</a>
+        </nav>
+    </header>
+    <div class="container">
+        <section id="about">
+            <h2>项目介绍</h2>
+            <p class="desc">
+                <b>SwapFace</b> 是一个基于 Python、Flask、OpenCV 和 InsightFace 的人脸替换/换脸项目。<br>
+                支持实时视频流处理，适合学习、演示和研究人脸识别与图像处理技术。
+            </p>
+        </section>
+        <section id="features">
+            <h2>功能亮点</h2>
+            <div class="features">
+                <div class="feature">
+                    <h3>高效换脸</h3>
+                    <p>基于 InsightFace 和 ONNX，支持高质量人脸替换。</p>
+                </div>
+                <div class="feature">
+                    <h3>实时处理</h3>
+                    <p>支持摄像头视频流实时换脸，低延迟体验。</p>
+                </div>
+                <div class="feature">
+                    <h3>易于扩展</h3>
+                    <p>代码结构清晰，便于二次开发和集成更多功能。</p>
+                </div>
+                <div class="feature">
+                    <h3>开源友好</h3>
+                    <p>适合学习、演示和科研用途，欢迎贡献和交流。</p>
+                </div>
+            </div>
+        </section>
+        <section id="contact">
+            <h2>联系方式</h2>
+            <p>如有问题或建议，欢迎通过 <a href="mailto:your@email.com">your@email.com</a> 联系我。</p>
+        </section>
+    </div>
+    <footer>
+        &copy; 2024 SwapFace 项目 | 基于 Flask &amp; OpenCV &amp; InsightFace
+    </footer>
+</body>
+</html> 
