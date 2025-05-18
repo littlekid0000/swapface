@@ -14,7 +14,7 @@
 - Backend: Flask, Flask-SocketIO
 - AI: InsightFace, ONNX Runtime
 - Frontend: HTML5, CSS3, JavaScript
-- Deployment: Railway
+
 
 ## 本地开发
 
@@ -34,10 +34,3 @@ pip install -r requirements.txt
 python app.py
 ```
 
-## 在线演示
-
-访问 [Railway 部署版本](https://swapface-production.up.railway.app)
-
-## 许可证
-
-MIT License 
